@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Navbar, Nav, Container, Button, Badge, Dropdown, Form, InputGroup, Offcanvas } from 'react-bootstrap';
+import React, { useState, useEffect, useRef } from 'react';
+import { Navbar, Nav, Container, Button, Badge, Dropdown, Form, InputGroup, Offcanvas, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Bell, 
@@ -19,7 +19,18 @@ import {
   X,
   Star,
   ShieldCheck,
-  Rocket
+  Rocket,
+  Target,
+  Clock,
+  Award,
+  Heart,
+  ArrowRight,
+  CheckCircle,
+  Zap,
+  TrendingUp,
+  Shield,
+  House,
+  BarChart
 } from 'react-bootstrap-icons';
 import { useStreaks } from '../context/StreaksContext';
 import toast from 'react-hot-toast';
@@ -27,79 +38,120 @@ import toast from 'react-hot-toast';
 const Header = ({ userData, isDemoMode }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { getStreakStats, checkInStreak } = useStreaks();
+  const { getStreakStats } = useStreaks();
   const stats = getStreakStats();
   
-  const [notifications, setNotifications] = useState(7);
+  const [notifications, setNotifications] = useState(3);
   const [searchQuery, setSearchQuery] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true); // Changed to true for dark mode by default
   const [showQuickCheckin, setShowQuickCheckin] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [streakPulse, setStreakPulse] = useState(false);
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
+  const [logoSpin, setLogoSpin] = useState(false);
+  const searchRef = useRef(null);
+  const notificationRef = useRef(null);
+  const userMenuRef = useRef(null);
 
   useEffect(() => {
     setActiveTab(location.pathname.split('/')[1] || 'dashboard');
   }, [location]);
 
   useEffect(() => {
-    // Pulse animation for streak counter
+    // Pulse animation for streak counter every 10 seconds
     const interval = setInterval(() => {
       setStreakPulse(true);
       setTimeout(() => setStreakPulse(false), 1000);
-    }, 5000);
+    }, 10000);
     return () => clearInterval(interval);
   }, []);
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleQuickCheckIn = () => {
-    const todayStreaks = Math.floor(Math.random() * 3) + 1;
-    toast.success(`✅ ${todayStreaks} streaks checked in! Keep going!`);
+    toast.success(
+      <div className="d-flex align-items-center">
+        <Rocket className="me-2 text-warning" size={16} />
+        <div>
+          <strong>Quick check-in ready!</strong>
+        </div>
+      </div>
+    );
     navigate('/streaks');
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      toast.success(`Searching for "${searchQuery}"...`);
+      toast.success(`Searching: "${searchQuery}"`);
       setSearchQuery('');
+      setShowSearchSuggestions(false);
     }
   };
 
   const handleNotificationClick = () => {
     setShowNotifications(!showNotifications);
-    if (!showNotifications) {
+    if (!showNotifications && notifications > 0) {
       setNotifications(0);
     }
   };
 
-  const quickCheckinItems = [
-    { id: 1, name: 'Morning Meditation', emoji: '🧘', time: '8:00 AM' },
-    { id: 2, name: 'Daily Exercise', emoji: '💪', time: '6:00 PM' },
-    { id: 3, name: 'Read Book', emoji: '📚', time: '9:00 PM' },
-    { id: 4, name: 'Water Intake', emoji: '💧', time: 'Throughout day' }
-  ];
-
-  const handleQuickCheckinItem = (item) => {
-    toast.success(`Checked in: ${item.name} ${item.emoji}`);
-    setShowQuickCheckin(false);
+  const handleLogoClick = () => {
+    setLogoSpin(true);
+    setTimeout(() => setLogoSpin(false), 1000);
+    navigate('/dashboard');
   };
 
+  const handleThemeToggle = () => {
+    setDarkMode(!darkMode);
+    toast.success(
+      <div className="d-flex align-items-center">
+        {darkMode ? <Sun className="me-2" /> : <Moon className="me-2" />}
+        <span>Switched to {darkMode ? 'light' : 'dark'} mode</span>
+      </div>
+    );
+  };
+
+  const quickCheckinItems = [
+    { id: 1, name: 'Meditation', emoji: '🧘', color: '#8B5CF6' },
+    { id: 2, name: 'Exercise', emoji: '💪', color: '#10B981' },
+    { id: 3, name: 'Reading', emoji: '📚', color: '#3B82F6' },
+  ];
+
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: <GraphUp size={18} />, badge: null },
-    { path: '/streaks', label: 'Streaks', icon: <Fire size={18} />, badge: stats.totalStreaks || 0 },
-    { path: '/friends', label: 'Friends', icon: <People size={18} />, badge: '3' },
-    { path: '/teams', label: 'Teams', icon: <People size={18} />, badge: '2' },
-    { path: '/analytics', label: 'Analytics', icon: <GraphUp size={18} />, badge: null },
-    { path: '/achievements', label: 'Achievements', icon: <Trophy size={18} />, badge: '5' },
+    { path: '/dashboard', label: 'Dashboard', icon: <House size={16} />, shortLabel: 'Home' },
+    { path: '/streaks', label: 'Streaks', icon: <Fire size={16} />, shortLabel: 'Streaks', badge: stats.totalStreaks || 0 },
+    { path: '/friends', label: 'Friends', icon: <People size={16} />, shortLabel: 'Friends', badge: '3' },
+    { path: '/analytics', label: 'Analytics', icon: <BarChart size={16} />, shortLabel: 'Stats' },
+    { path: '/achievements', label: 'Achievements', icon: <Trophy size={16} />, shortLabel: 'Awards', badge: '5' },
   ];
 
   const userMenuItems = [
-    { label: 'My Profile', path: '/dashboard', icon: <PersonCircle /> },
+    { label: 'Dashboard', path: '/dashboard', icon: <House /> },
     { label: 'My Streaks', path: '/streaks', icon: <Fire /> },
-    { label: 'Analytics', path: '/analytics', icon: <GraphUp /> },
+    { label: 'Analytics', path: '/analytics', icon: <BarChart /> },
     { label: 'Settings', path: '/settings', icon: <Gear /> },
-    { label: 'Upgrade Plan', path: '/pricing', icon: <Rocket />, premium: true }
+    { label: 'Upgrade', path: '/pricing', icon: <Rocket />, premium: true }
+  ];
+
+  const notificationItems = [
+    { id: 1, title: 'Achievement Unlocked!', message: 'You earned the "Week Warrior" badge', time: '2m ago', icon: <Trophy /> },
+    { id: 2, title: 'Friend Activity', message: 'John completed his meditation streak', time: '15m ago', icon: <People /> },
+    { id: 3, title: 'Daily Reminder', message: 'Time for your evening exercise', time: '1h ago', icon: <Clock /> },
   ];
 
   return (
@@ -110,324 +162,686 @@ const Header = ({ userData, isDemoMode }) => {
         className={`header-navbar ${darkMode ? 'dark-mode' : 'light-mode'}`}
         style={{
           background: darkMode 
-            ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)' 
-            : 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-          backdropFilter: 'blur(10px)',
+            ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' 
+            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%)',
+          backdropFilter: 'blur(20px) saturate(180%)',
           borderBottom: darkMode 
-            ? '1px solid rgba(255, 255, 255, 0.1)' 
-            : '1px solid rgba(0, 0, 0, 0.1)',
-          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.05)'
+            ? '1px solid rgba(255, 255, 255, 0.15)' 
+            : '1px solid rgba(203, 213, 225, 0.5)',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+          height: '64px',
+          minHeight: '64px',
+          overflow: 'hidden',
+          position: 'relative'
         }}
       >
-        <Container fluid="xl">
-          {/* Brand Logo */}
-          <Navbar.Brand as={Link} to="/" className="d-flex align-items-center brand-logo">
-            <div className="logo-icon">
-              <Fire className="logo-fire" />
-            </div>
-            <div className="brand-text">
-              <span className="fw-bold" style={{ color: darkMode ? '#fff' : '#1e293b' }}>
-                LifeStreaks
+        <Container fluid="xl" className="px-3 px-lg-4">
+          {/* Compact Brand Logo */}
+          <div className="d-flex align-items-center">
+            <Button
+              variant="link"
+              className="brand-logo p-0 me-3"
+              onClick={handleLogoClick}
+              style={{ textDecoration: 'none' }}
+            >
+              <div className="logo-container position-relative">
+                <div className={`logo-core ${logoSpin ? 'spin' : ''}`}
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'transform 0.6s ease'
+                  }}
+                >
+                  <Fire className="logo-fire" style={{ color: 'white', fontSize: '18px' }} />
+                </div>
+                {logoSpin && (
+                  <div className="logo-ring" 
+                    style={{
+                      position: 'absolute',
+                      top: '-4px',
+                      left: '-4px',
+                      right: '-4px',
+                      bottom: '-4px',
+                      border: '2px solid rgba(245, 158, 11, 0.3)',
+                      borderRadius: '14px',
+                      animation: 'ring-expand 0.6s ease-out'
+                    }}
+                  />
+                )}
+              </div>
+            </Button>
+
+            {/* Compact Brand Text */}
+            <div className="brand-text d-none d-md-block">
+              <span className="fw-bold" style={{ 
+                fontSize: '1.1rem',
+                color: darkMode ? '#e2e8f0' : '#1e293b',
+                letterSpacing: '-0.3px'
+              }}>
+                Life<span style={{ 
+                  background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
+                }}>Streaks</span>
               </span>
               {isDemoMode && (
-                <Badge bg="info" className="ms-2 demo-badge" pill>
+                <Badge bg="info" className="ms-2" pill style={{ 
+                  fontSize: '0.6rem', 
+                  padding: '2px 6px',
+                  verticalAlign: 'middle'
+                }}>
                   DEMO
                 </Badge>
               )}
             </div>
-          </Navbar.Brand>
+          </div>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Menu Toggle - Minimal */}
           <Button
             variant="link"
-            className="d-lg-none text-dark border-0 p-2"
+            className="d-lg-none mobile-menu-toggle p-2"
             onClick={() => setShowMobileMenu(true)}
+            style={{ 
+              color: darkMode ? '#94a3b8' : '#64748b',
+              borderRadius: '10px',
+              marginLeft: 'auto'
+            }}
           >
-            <List size={24} />
+            <List size={20} />
           </Button>
 
-          {/* Main Navigation */}
-          <Navbar.Collapse id="navbar-nav">
-            {/* Search Bar */}
-            <div className="search-container me-3">
-              <Form onSubmit={handleSearch}>
-                <InputGroup>
-                  <InputGroup.Text className="search-icon">
-                    <Search size={16} />
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="search"
-                    placeholder="Search streaks, friends, teams..."
-                    className="search-input"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    style={{
-                      background: darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-                      border: darkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
-                      color: darkMode ? '#fff' : '#1e293b'
-                    }}
-                  />
-                </InputGroup>
-              </Form>
-            </div>
-
-            {/* Navigation Links */}
-            <Nav className="mx-auto">
+          {/* Main Navigation - Compact */}
+          <Navbar.Collapse id="navbar-nav" className="justify-content-between">
+            {/* Compact Navigation */}
+            <Nav className="mx-3">
               {navItems.map((item) => (
-                <Nav.Link
+                <OverlayTrigger
                   key={item.path}
-                  as={Link}
-                  to={item.path}
-                  className={`nav-link-item ${activeTab === item.path.split('/')[1] ? 'active' : ''}`}
-                  style={{
-                    color: activeTab === item.path.split('/')[1] 
-                      ? (darkMode ? '#60a5fa' : '#3b82f6')
-                      : (darkMode ? '#cbd5e1' : '#64748b')
-                  }}
+                  placement="bottom"
+                  overlay={
+                    <Tooltip id={`tooltip-${item.path}`}>
+                      {item.label}
+                    </Tooltip>
+                  }
                 >
-                  <div className="d-flex align-items-center">
-                    {item.icon}
-                    <span className="ms-2">{item.label}</span>
-                    {item.badge && (
-                      <Badge 
-                        bg={activeTab === item.path.split('/')[1] ? 'primary' : 'light'} 
-                        text={activeTab === item.path.split('/')[1] ? 'white' : 'dark'} 
-                        pill
-                        className="ms-2"
-                      >
-                        {item.badge}
-                      </Badge>
-                    )}
-                  </div>
-                </Nav.Link>
+                  <Nav.Link
+                    as={Link}
+                    to={item.path}
+                    className={`nav-link-item ${activeTab === item.path.split('/')[1] ? 'active' : ''}`}
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: '10px',
+                      margin: '0 2px',
+                      transition: 'all 0.2s ease',
+                      position: 'relative'
+                    }}
+                  >
+                    <div className="position-relative">
+                      <div className="nav-icon-wrapper">
+                        {React.cloneElement(item.icon, {
+                          style: {
+                            color: activeTab === item.path.split('/')[1] 
+                              ? (darkMode ? '#60a5fa' : '#3b82f6')
+                              : (darkMode ? '#94a3b8' : '#64748b'),
+                            transition: 'all 0.2s ease'
+                          }
+                        })}
+                      </div>
+                      
+                      {/* Active indicator */}
+                      {activeTab === item.path.split('/')[1] && (
+                        <div className="active-dot" 
+                          style={{
+                            position: 'absolute',
+                            bottom: '-6px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            width: '4px',
+                            height: '4px',
+                            background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
+                            borderRadius: '50%',
+                            animation: 'dot-pulse 2s ease-in-out infinite'
+                          }}
+                        />
+                      )}
+                      
+                      {/* Badge */}
+                      {item.badge && (
+                        <Badge 
+                          pill
+                          className="nav-badge"
+                          style={{
+                            position: 'absolute',
+                            top: '-4px',
+                            right: '-4px',
+                            fontSize: '0.6rem',
+                            padding: '2px 5px',
+                            minWidth: '18px',
+                            background: activeTab === item.path.split('/')[1]
+                              ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)'
+                              : (darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'),
+                            color: activeTab === item.path.split('/')[1] ? 'white' : (darkMode ? '#cbd5e1' : '#64748b'),
+                            border: activeTab === item.path.split('/')[1] ? 'none' : `1px solid ${darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
+                          }}
+                        >
+                          {item.badge}
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    {/* Label for larger screens */}
+                    <div className="nav-label d-none d-xl-block mt-1" 
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: '500',
+                        color: activeTab === item.path.split('/')[1] 
+                          ? (darkMode ? '#60a5fa' : '#3b82f6')
+                          : (darkMode ? '#94a3b8' : '#64748b'),
+                        textAlign: 'center'
+                      }}
+                    >
+                      {item.shortLabel}
+                    </div>
+                  </Nav.Link>
+                </OverlayTrigger>
               ))}
             </Nav>
 
-            {/* Right Side Actions */}
-            <div className="d-flex align-items-center gap-3">
-              {/* Streak Counter */}
-              <div 
-                className={`streak-counter ${streakPulse ? 'pulse' : ''}`}
-                onClick={handleQuickCheckIn}
-                style={{
-                  background: darkMode 
-                    ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)' 
-                    : 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%)',
-                  border: darkMode 
-                    ? '1px solid rgba(59, 130, 246, 0.2)' 
-                    : '1px solid rgba(59, 130, 246, 0.1)',
-                  cursor: 'pointer'
-                }}
-              >
-                <Fire className="text-warning me-2" />
-                <div>
-                  <div className="small text-muted">Current Streak</div>
-                  <div className="h5 mb-0 fw-bold">{stats.longestStreak || 0} days</div>
-                </div>
+            {/* Right Side Actions - Compact */}
+            <div className="d-flex align-items-center gap-2">
+              {/* Compact Search */}
+              <div className="search-container" ref={searchRef}>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>Quick search</Tooltip>}
+                >
+                  <div className="position-relative">
+                    <Form onSubmit={handleSearch}>
+                      <InputGroup className="search-group" style={{ width: '180px' }}>
+                        <InputGroup.Text className="search-icon-wrapper" 
+                          style={{ 
+                            background: 'transparent', 
+                            border: 'none', 
+                            padding: '8px 12px' 
+                          }}
+                        >
+                          <Search size={14} style={{ color: darkMode ? '#94a3b8' : '#64748b' }} />
+                        </InputGroup.Text>
+                        <Form.Control
+                          type="search"
+                          placeholder="Search..."
+                          className="search-input"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          onFocus={() => setShowSearchSuggestions(true)}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: darkMode ? '#e2e8f0' : '#1e293b',
+                            fontSize: '0.85rem',
+                            padding: '8px 12px',
+                            paddingLeft: '0'
+                          }}
+                        />
+                      </InputGroup>
+                    </Form>
+                    
+                    {/* Search Suggestions */}
+                    {showSearchSuggestions && searchQuery && (
+                      <div 
+                        className="search-suggestions shadow-lg"
+                        style={{
+                          position: 'absolute',
+                          top: '100%',
+                          left: 0,
+                          right: 0,
+                          background: darkMode ? '#1e293b' : '#ffffff',
+                          border: darkMode ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(203, 213, 225, 0.5)',
+                          borderRadius: '8px',
+                          marginTop: '4px',
+                          zIndex: 1000,
+                          maxHeight: '300px',
+                          overflowY: 'auto'
+                        }}
+                      >
+                        <div className="p-2">
+                          <div className="small px-2 py-1 text-muted">Suggestions</div>
+                          {['Meditation Streak', 'Exercise Tracker', 'Reading Challenge', 'Friends Activity'].map((suggestion, index) => (
+                            <div 
+                              key={index}
+                              className="search-suggestion-item px-3 py-2"
+                              onClick={() => {
+                                setSearchQuery(suggestion);
+                                setShowSearchSuggestions(false);
+                              }}
+                              style={{
+                                cursor: 'pointer',
+                                borderRadius: '6px',
+                                transition: 'all 0.2s ease',
+                                color: darkMode ? '#e2e8f0' : '#1e293b'
+                              }}
+                            >
+                              <Search size={12} className="me-2" />
+                              <small>{suggestion}</small>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </OverlayTrigger>
               </div>
 
-              {/* Quick Check-in Button */}
-              <Dropdown show={showQuickCheckin} onToggle={setShowQuickCheckin}>
-                <Dropdown.Toggle
-                  variant="primary"
-                  className="quick-checkin-btn"
+              {/* Compact Streak Counter */}
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip>Current streak - Click to check in</Tooltip>}
+              >
+                <div 
+                  className={`streak-counter ${streakPulse ? 'pulse' : ''}`}
+                  onClick={handleQuickCheckIn}
                   style={{
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    border: 'none',
-                    borderRadius: '12px'
+                    background: darkMode 
+                      ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1))' 
+                      : 'linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(251, 191, 36, 0.05))',
+                    border: darkMode 
+                      ? '1px solid rgba(245, 158, 11, 0.2)' 
+                      : '1px solid rgba(245, 158, 11, 0.1)',
+                    borderRadius: '12px',
+                    padding: '6px 12px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    minWidth: '80px'
                   }}
                 >
-                  <Lightning className="me-2" />
-                  Quick Check-in
-                </Dropdown.Toggle>
-                <Dropdown.Menu 
-                  className="shadow-lg border-0"
+                  <div className="d-flex align-items-center justify-content-center">
+                    <Fire size={14} className="text-warning me-2" />
+                    <div>
+                      <div className="fw-bold" style={{ 
+                        fontSize: '0.9rem',
+                        color: darkMode ? '#fbbf24' : '#d97706'
+                      }}>
+                        {stats.longestStreak || 0}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </OverlayTrigger>
+
+              {/* Quick Check-in Button - Compact */}
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip>Quick check-in</Tooltip>}
+              >
+                <Button
+                  variant="link"
+                  className="quick-checkin-btn p-2"
+                  onClick={() => setShowQuickCheckin(!showQuickCheckin)}
+                  style={{ 
+                    color: darkMode ? '#cbd5e1' : '#64748b',
+                    borderRadius: '10px',
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <Lightning size={16} />
+                </Button>
+              </OverlayTrigger>
+              
+              {/* Quick Check-in Dropdown */}
+              {showQuickCheckin && (
+                <div 
+                  className="quick-checkin-dropdown shadow-xl"
                   style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: '120px',
                     background: darkMode ? '#1e293b' : '#ffffff',
-                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
-                    minWidth: '280px'
+                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(203, 213, 225, 0.5)',
+                    borderRadius: '12px',
+                    minWidth: '200px',
+                    zIndex: 1050,
+                    marginTop: '8px',
+                    animation: 'slide-down 0.2s ease'
                   }}
                 >
-                  <Dropdown.Header className="text-center fw-bold">
-                    <CalendarCheck className="me-2" />
-                    Quick Check-in
-                  </Dropdown.Header>
+                  <div className="px-3 pb-2 border-bottom" style={{ borderColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}>
+                    <div className="d-flex align-items-center">
+                      <CalendarCheck size={14} className="me-2 text-primary" />
+                      <small className="fw-bold">Quick Check-in</small>
+                    </div>
+                  </div>
+                  
                   {quickCheckinItems.map((item) => (
-                    <Dropdown.Item 
+                    <div 
                       key={item.id}
-                      className="d-flex align-items-center justify-content-between py-3"
-                      onClick={() => handleQuickCheckinItem(item)}
+                      className="px-3 py-2 quick-checkin-item"
+                      onClick={() => {
+                        toast.success(`Checked in: ${item.name} ${item.emoji}`);
+                        setShowQuickCheckin(false);
+                      }}
                       style={{
-                        color: darkMode ? '#e2e8f0' : '#1e293b',
-                        borderBottom: darkMode ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.05)'
+                        borderBottom: `1px solid ${darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'}`,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        color: darkMode ? '#e2e8f0' : '#1e293b'
                       }}
                     >
                       <div className="d-flex align-items-center">
-                        <span className="emoji me-3">{item.emoji}</span>
+                        <span className="me-2" style={{ fontSize: '20px' }}>{item.emoji}</span>
                         <div>
-                          <div className="fw-bold">{item.name}</div>
-                          <div className="small text-muted">{item.time}</div>
+                          <div className="small fw-medium">{item.name}</div>
                         </div>
                       </div>
-                      <Button 
-                        size="sm" 
-                        variant="outline-success"
-                        className="rounded-pill"
-                      >
-                        Check In
-                      </Button>
-                    </Dropdown.Item>
+                    </div>
                   ))}
-                </Dropdown.Menu>
-              </Dropdown>
+                </div>
+              )}
 
-              {/* Theme Toggle */}
-              <Button
-                variant="link"
-                className="theme-toggle p-2"
-                onClick={() => setDarkMode(!darkMode)}
-                style={{ color: darkMode ? '#fbbf24' : '#64748b' }}
+              {/* Theme Toggle - Compact */}
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip>Toggle theme</Tooltip>}
               >
-                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-              </Button>
-
-              {/* Notifications */}
-              <div className="position-relative">
                 <Button
                   variant="link"
-                  className="notification-btn p-2 position-relative"
-                  onClick={handleNotificationClick}
-                  style={{ color: darkMode ? '#cbd5e1' : '#64748b' }}
+                  className="theme-toggle p-2"
+                  onClick={handleThemeToggle}
+                  style={{ 
+                    color: darkMode ? '#fbbf24' : '#64748b',
+                    borderRadius: '10px',
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
                 >
-                  <Bell size={20} />
-                  {notifications > 0 && (
-                    <Badge 
-                      bg="danger" 
-                      pill 
-                      className="notification-badge"
-                    >
-                      {notifications}
-                    </Badge>
-                  )}
+                  {darkMode ? <Sun size={16} /> : <Moon size={16} />}
                 </Button>
+              </OverlayTrigger>
+
+              {/* Notifications - Compact */}
+              <div className="position-relative" ref={notificationRef}>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>Notifications</Tooltip>}
+                >
+                  <Button
+                    variant="link"
+                    className="notification-btn p-2 position-relative"
+                    onClick={handleNotificationClick}
+                    style={{ 
+                      color: darkMode ? '#cbd5e1' : '#64748b',
+                      borderRadius: '10px',
+                      width: '40px',
+                      height: '40px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Bell size={16} />
+                    {notifications > 0 && (
+                      <Badge 
+                        bg="danger" 
+                        pill 
+                        className="notification-badge"
+                        style={{
+                          position: 'absolute',
+                          top: '4px',
+                          right: '4px',
+                          minWidth: '16px',
+                          height: '16px',
+                          fontSize: '0.6rem',
+                          padding: '2px',
+                          border: darkMode ? '2px solid #1e293b' : '2px solid white',
+                          animation: notifications > 0 ? 'badge-bounce 1s ease infinite' : 'none'
+                        }}
+                      >
+                        {notifications}
+                      </Badge>
+                    )}
+                  </Button>
+                </OverlayTrigger>
                 
                 {/* Notification Dropdown */}
                 {showNotifications && (
                   <div 
-                    className="notification-dropdown shadow-lg border-0"
+                    className="notification-dropdown shadow-xl"
                     style={{
                       position: 'absolute',
                       top: '100%',
                       right: 0,
                       background: darkMode ? '#1e293b' : '#ffffff',
-                      border: darkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
+                      border: darkMode ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(203, 213, 225, 0.5)',
                       borderRadius: '12px',
-                      minWidth: '320px',
+                      width: '320px',
                       zIndex: 1050,
-                      marginTop: '10px'
+                      marginTop: '8px',
+                      animation: 'slide-down 0.2s ease'
                     }}
                   >
                     <div className="p-3 border-bottom" style={{ borderColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <h6 className="mb-0 fw-bold">Notifications</h6>
-                        <Button variant="link" size="sm" className="p-0">
-                          Mark all as read
+                      <div className="d-flex align-items-center justify-content-between">
+                        <div className="d-flex align-items-center">
+                          <Bell size={16} className="me-2 text-primary" />
+                          <small className="fw-bold">Notifications</small>
+                          {notifications > 0 && (
+                            <Badge bg="primary" pill className="ms-2" style={{ fontSize: '0.6rem', padding: '2px 6px' }}>
+                              {notifications} new
+                            </Badge>
+                          )}
+                        </div>
+                        <Button 
+                          variant="link" 
+                          size="sm" 
+                          className="p-0"
+                          style={{ fontSize: '0.75rem' }}
+                          onClick={() => {
+                            setNotifications(0);
+                            toast.success('Cleared all notifications');
+                          }}
+                        >
+                          Clear
                         </Button>
                       </div>
                     </div>
-                    <div className="p-2">
-                      {[1, 2, 3].map((_, i) => (
+                    
+                    <div className="notification-list" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                      {notificationItems.map((item) => (
                         <div 
-                          key={i}
+                          key={item.id}
                           className="notification-item p-3 border-bottom"
-                          style={{ borderColor: darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }}
+                          style={{ 
+                            borderColor: darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            color: darkMode ? '#e2e8f0' : '#1e293b'
+                          }}
+                          onClick={() => {
+                            toast.success(`Notification: ${item.title}`);
+                            setShowNotifications(false);
+                          }}
                         >
                           <div className="d-flex">
                             <div className="me-3">
-                              <div className="notification-icon rounded-circle d-flex align-items-center justify-content-center"
+                              <div 
+                                className="rounded-circle d-flex align-items-center justify-content-center"
                                 style={{ 
-                                  width: '36px', 
-                                  height: '36px',
+                                  width: '32px', 
+                                  height: '32px',
                                   background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
                                   color: 'white'
                                 }}
                               >
-                                <Trophy size={16} />
+                                {item.icon}
                               </div>
                             </div>
                             <div className="flex-grow-1">
-                              <div className="fw-bold mb-1">Achievement Unlocked!</div>
-                              <div className="small text-muted mb-2">You earned the "Week Warrior" badge</div>
-                              <div className="small text-muted">2 minutes ago</div>
+                              <div className="small fw-medium mb-1">{item.title}</div>
+                              <div className="small text-muted mb-1">{item.message}</div>
+                              <div className="small text-muted">{item.time}</div>
                             </div>
                           </div>
                         </div>
                       ))}
                     </div>
+                    
+                    <div className="p-2 border-top" style={{ borderColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}>
+                      <Button 
+                        variant="link" 
+                        className="w-100 text-center"
+                        size="sm"
+                        onClick={() => navigate('/notifications')}
+                        style={{ fontSize: '0.75rem' }}
+                      >
+                        View all notifications
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
 
-              {/* User Menu */}
-              <Dropdown align="end">
-                <Dropdown.Toggle
-                  variant="link"
-                  className="user-menu-toggle d-flex align-items-center p-0"
-                  style={{ color: darkMode ? '#e2e8f0' : '#1e293b' }}
+              {/* User Menu - Compact */}
+              <Dropdown align="end" ref={userMenuRef}>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>Account menu</Tooltip>}
                 >
-                  <div className="user-avatar me-2">
-                    <PersonCircle size={32} />
-                  </div>
-                  <div className="d-none d-md-block text-start">
-                    <div className="small fw-bold">{userData?.name || 'Welcome'}</div>
-                    <div className="small text-muted">Premium User</div>
-                  </div>
-                  <ChevronDown className="ms-2" size={16} />
-                </Dropdown.Toggle>
+                  <Dropdown.Toggle
+                    variant="link"
+                    className="user-menu-toggle p-0"
+                    style={{ 
+                      textDecoration: 'none',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <div className="user-avatar"
+                      style={{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '10px',
+                        background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        position: 'relative'
+                      }}
+                    >
+                      {userData?.name?.charAt(0) || 'U'}
+                      <div className="online-status"
+                        style={{
+                          position: 'absolute',
+                          bottom: '2px',
+                          right: '2px',
+                          width: '8px',
+                          height: '8px',
+                          background: '#10b981',
+                          borderRadius: '50%',
+                          border: darkMode ? '2px solid #1e293b' : '2px solid white'
+                        }}
+                      />
+                    </div>
+                  </Dropdown.Toggle>
+                </OverlayTrigger>
 
                 <Dropdown.Menu 
-                  className="shadow-lg border-0 user-dropdown"
+                  className="shadow-xl border-0"
                   style={{
                     background: darkMode ? '#1e293b' : '#ffffff',
-                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
-                    minWidth: '240px'
+                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(203, 213, 225, 0.5)',
+                    borderRadius: '12px',
+                    minWidth: '200px',
+                    padding: '12px 0',
+                    marginTop: '8px'
                   }}
                 >
-                  <Dropdown.Header className="text-center">
-                    <div className="user-avatar-large mx-auto mb-2">
-                      <PersonCircle size={48} />
+                  <div className="px-3 pb-3 border-bottom" style={{ borderColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}>
+                    <div className="text-center">
+                      <div className="user-avatar-large mx-auto mb-2"
+                        style={{
+                          width: '48px',
+                          height: '48px',
+                          borderRadius: '12px',
+                          background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'white',
+                          fontWeight: 'bold',
+                          fontSize: '18px'
+                        }}
+                      >
+                        {userData?.name?.charAt(0) || 'U'}
+                      </div>
+                      <div className="small fw-bold mb-1">{userData?.name || 'User'}</div>
+                      <div className="small text-muted mb-2">{userData?.email || 'demo@lifestreaks.com'}</div>
+                      {isDemoMode && (
+                        <Badge bg="info" className="px-2 py-1" pill style={{ fontSize: '0.65rem' }}>
+                          <ShieldCheck size={10} className="me-1" /> Demo
+                        </Badge>
+                      )}
                     </div>
-                    <div className="fw-bold">{userData?.name || 'Demo User'}</div>
-                    <div className="small text-muted">{userData?.email || 'demo@lifestreaks.com'}</div>
-                    {isDemoMode && (
-                      <Badge bg="info" className="mt-2" pill>
-                        <ShieldCheck className="me-1" /> Demo Mode
-                      </Badge>
-                    )}
-                  </Dropdown.Header>
-                  <Dropdown.Divider />
+                  </div>
+                  
                   {userMenuItems.map((item, index) => (
                     <Dropdown.Item 
                       key={index}
                       as={Link}
                       to={item.path}
-                      className="d-flex align-items-center py-3"
+                      className="px-3 py-2"
                       style={{
-                        color: darkMode ? '#e2e8f0' : '#1e293b',
                         borderBottom: index < userMenuItems.length - 1 
-                          ? (darkMode ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.05)') 
-                          : 'none'
+                          ? `1px solid ${darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'}`
+                          : 'none',
+                        transition: 'all 0.2s ease',
+                        color: darkMode ? '#e2e8f0' : '#1e293b'
                       }}
                     >
-                      <div className="me-3" style={{ color: item.premium ? '#f59e0b' : (darkMode ? '#94a3b8' : '#64748b') }}>
-                        {item.icon}
+                      <div className="d-flex align-items-center justify-content-between">
+                        <div className="d-flex align-items-center">
+                          <div className="me-3"
+                            style={{
+                              color: item.premium ? '#f59e0b' : (darkMode ? '#94a3b8' : '#64748b')
+                            }}
+                          >
+                            {item.icon}
+                          </div>
+                          <div className="small">{item.label}</div>
+                        </div>
+                        {item.premium && (
+                          <Star size={12} className="text-warning" fill="currentColor" />
+                        )}
                       </div>
-                      <div className="flex-grow-1">{item.label}</div>
-                      {item.premium && (
-                        <Star className="text-warning" size={14} />
-                      )}
                     </Dropdown.Item>
                   ))}
+                  
+                  <div className="px-3 pt-2">
+                    <Button 
+                      variant={darkMode ? 'outline-light' : 'outline-secondary'} 
+                      size="sm"
+                      className="w-100"
+                      onClick={() => {
+                        toast.success('Logged out successfully');
+                        navigate('/login');
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  </div>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -435,46 +849,73 @@ const Header = ({ userData, isDemoMode }) => {
         </Container>
       </Navbar>
 
-      {/* Mobile Offcanvas Menu */}
+      {/* Mobile Offcanvas Menu - Compact */}
       <Offcanvas
         show={showMobileMenu}
         onHide={() => setShowMobileMenu(false)}
         placement="end"
-        className={darkMode ? 'dark-mode' : ''}
+        className={`mobile-offcanvas ${darkMode ? 'dark-mode' : ''}`}
         style={{
           background: darkMode ? '#0f172a' : '#ffffff',
-          color: darkMode ? '#e2e8f0' : '#1e293b'
+          borderLeft: darkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(203, 213, 225, 0.5)',
+          width: '280px'
         }}
       >
-        <Offcanvas.Header className="border-bottom" style={{ borderColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}>
-          <div className="d-flex align-items-center">
-            <Fire className="text-warning me-2" />
-            <Offcanvas.Title className="fw-bold">LifeStreaks</Offcanvas.Title>
+        <Offcanvas.Header className="border-bottom py-3" style={{ borderColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}>
+          <div className="d-flex align-items-center w-100">
+            <div className="logo-container me-3">
+              <div className="logo-core"
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Fire style={{ color: 'white', fontSize: '16px' }} />
+              </div>
+            </div>
+            <Offcanvas.Title className="fw-bold mb-0" style={{ 
+              fontSize: '1.1rem',
+              color: darkMode ? '#e2e8f0' : '#1e293b'
+            }}>
+              LifeStreaks
+            </Offcanvas.Title>
+            <Button
+              variant="link"
+              className="p-0 ms-auto"
+              onClick={() => setShowMobileMenu(false)}
+              style={{ color: darkMode ? '#e2e8f0' : '#1e293b' }}
+            >
+              <X size={20} />
+            </Button>
           </div>
-          <Button
-            variant="link"
-            className="p-0"
-            onClick={() => setShowMobileMenu(false)}
-            style={{ color: darkMode ? '#e2e8f0' : '#1e293b' }}
-          >
-            <X size={24} />
-          </Button>
         </Offcanvas.Header>
-        <Offcanvas.Body>
-          <div className="mb-4">
+        <Offcanvas.Body className="p-0">
+          <div className="p-3 border-bottom" style={{ borderColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }}>
             <Form onSubmit={handleSearch}>
               <InputGroup>
-                <InputGroup.Text style={{ background: darkMode ? '#1e293b' : '#f8fafc' }}>
-                  <Search />
+                <InputGroup.Text style={{ 
+                  background: darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+                  border: darkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(203, 213, 225, 0.5)',
+                  borderRight: 'none',
+                  color: darkMode ? '#94a3b8' : '#64748b'
+                }}>
+                  <Search size={14} />
                 </InputGroup.Text>
                 <Form.Control
                   placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   style={{
-                    background: darkMode ? '#1e293b' : '#f8fafc',
-                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)',
-                    color: darkMode ? '#e2e8f0' : '#1e293b'
+                    background: darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+                    border: darkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(203, 213, 225, 0.5)',
+                    borderLeft: 'none',
+                    color: darkMode ? '#e2e8f0' : '#1e293b',
+                    fontSize: '0.9rem'
                   }}
                 />
               </InputGroup>
@@ -487,242 +928,226 @@ const Header = ({ userData, isDemoMode }) => {
                 key={item.path}
                 as={Link}
                 to={item.path}
-                className="d-flex align-items-center justify-content-between py-3"
+                className="mobile-nav-item py-3 px-4"
                 onClick={() => setShowMobileMenu(false)}
                 style={{
                   color: activeTab === item.path.split('/')[1] 
                     ? (darkMode ? '#60a5fa' : '#3b82f6')
                     : (darkMode ? '#cbd5e1' : '#64748b'),
-                  borderBottom: '1px solid',
-                  borderColor: darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
+                  background: activeTab === item.path.split('/')[1]
+                    ? (darkMode ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.05)')
+                    : 'transparent',
+                  borderBottom: `1px solid ${darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'}`
                 }}
               >
-                <div className="d-flex align-items-center">
-                  {item.icon}
-                  <span className="ms-3">{item.label}</span>
+                <div className="d-flex align-items-center justify-content-between">
+                  <div className="d-flex align-items-center">
+                    <div className="me-3" style={{ 
+                      width: '20px',
+                      color: activeTab === item.path.split('/')[1] 
+                        ? (darkMode ? '#60a5fa' : '#3b82f6')
+                        : (darkMode ? '#cbd5e1' : '#64748b')
+                    }}>
+                      {item.icon}
+                    </div>
+                    <span className="small">{item.label}</span>
+                  </div>
+                  {item.badge && (
+                    <Badge 
+                      bg={activeTab === item.path.split('/')[1] ? 'primary' : (darkMode ? 'secondary' : 'light')} 
+                      pill 
+                      style={{ 
+                        fontSize: '0.65rem', 
+                        padding: '2px 6px',
+                        color: darkMode ? '#e2e8f0' : '#1e293b'
+                      }}
+                    >
+                      {item.badge}
+                    </Badge>
+                  )}
                 </div>
-                {item.badge && (
-                  <Badge bg="primary" pill>
-                    {item.badge}
-                  </Badge>
-                )}
               </Nav.Link>
             ))}
           </Nav>
           
-          <div className="mt-4 p-3 rounded" style={{ background: darkMode ? '#1e293b' : '#f1f5f9' }}>
+          <div className="p-4" style={{ borderTop: `1px solid ${darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}` }}>
             <div className="d-flex align-items-center mb-3">
-              <PersonCircle size={40} className="me-3" />
+              <div className="user-avatar-mobile me-3"
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontSize: '16px'
+                }}
+              >
+                {userData?.name?.charAt(0) || 'U'}
+              </div>
               <div>
-                <div className="fw-bold">{userData?.name || 'User'}</div>
-                <div className="small text-muted">Premium Account</div>
+                <div className="small fw-bold" style={{ color: darkMode ? '#e2e8f0' : '#1e293b' }}>
+                  {userData?.name || 'User'}
+                </div>
+                <div className="small" style={{ color: darkMode ? '#94a3b8' : '#64748b' }}>
+                  Premium Account
+                </div>
               </div>
             </div>
             <Button 
               as={Link} 
               to="/dashboard" 
               variant="primary" 
-              className="w-100 mb-2"
+              className="w-100 mb-3 py-2"
               onClick={() => setShowMobileMenu(false)}
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '0.9rem'
+              }}
             >
               Go to Dashboard
             </Button>
+            <div className="d-flex gap-2">
+              <Button 
+                variant={darkMode ? 'outline-light' : 'outline-secondary'} 
+                size="sm"
+                onClick={() => {
+                  handleThemeToggle();
+                  setShowMobileMenu(false);
+                }}
+                className="flex-grow-1 py-2"
+                style={{ 
+                  borderRadius: '8px', 
+                  fontSize: '0.8rem',
+                  color: darkMode ? '#e2e8f0' : '#1e293b',
+                  borderColor: darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(203, 213, 225, 0.5)'
+                }}
+              >
+                {darkMode ? <Sun size={14} className="me-2" /> : <Moon size={14} className="me-2" />}
+                Theme
+              </Button>
+              <Button 
+                variant={darkMode ? 'outline-light' : 'outline-secondary'} 
+                size="sm"
+                as={Link}
+                to="/settings"
+                onClick={() => setShowMobileMenu(false)}
+                className="flex-grow-1 py-2"
+                style={{ 
+                  borderRadius: '8px', 
+                  fontSize: '0.8rem',
+                  color: darkMode ? '#e2e8f0' : '#1e293b',
+                  borderColor: darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(203, 213, 225, 0.5)'
+                }}
+              >
+                <Gear size={14} className="me-2" />
+                Settings
+              </Button>
+            </div>
           </div>
         </Offcanvas.Body>
       </Offcanvas>
 
+      {/* CSS Animations */}
       <style jsx>{`
+        /* Global header styles */
         .header-navbar {
-          transition: all 0.3s ease;
+          height: 64px;
+          min-height: 64px;
+          max-height: 64px;
         }
         
-        .brand-logo {
-          text-decoration: none;
-        }
-        
-        .logo-icon {
-          width: 36px;
-          height: 36px;
-          background: linear-gradient(135deg, #f59e0b, #f97316);
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-right: 10px;
-        }
-        
-        .logo-fire {
-          color: white;
-          font-size: 20px;
-          animation: fire-flicker 2s ease-in-out infinite;
-        }
-        
-        .brand-text {
-          display: flex;
+        .navbar-collapse {
           align-items: center;
         }
         
-        .demo-badge {
-          font-size: 0.6rem;
-          padding: 2px 8px;
+        /* Logo animations */
+        .logo-core.spin {
+          animation: logo-spin 0.6s ease;
         }
         
-        .search-container {
-          width: 300px;
+        @keyframes logo-spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
         
-        .search-icon {
-          background: transparent;
-          border: none;
-          color: #64748b;
+        @keyframes ring-expand {
+          0% { 
+            transform: scale(0.8);
+            opacity: 1;
+          }
+          100% { 
+            transform: scale(1.2);
+            opacity: 0;
+          }
         }
         
-        .search-input {
-          border-left: none;
-          border-radius: 8px;
-          transition: all 0.3s ease;
-        }
-        
-        .search-input:focus {
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-          border-color: #3b82f6;
-        }
-        
+        /* Navigation animations */
         .nav-link-item {
-          padding: 12px 16px;
-          border-radius: 8px;
-          margin: 0 4px;
-          transition: all 0.3s ease;
-          text-decoration: none;
+          transition: all 0.2s ease;
         }
         
         .nav-link-item:hover {
-          background: rgba(59, 130, 246, 0.1);
-          transform: translateY(-2px);
+          background: ${darkMode ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)'};
         }
         
         .nav-link-item.active {
-          background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
-          font-weight: 600;
+          background: ${darkMode ? 'rgba(59, 130, 246, 0.25)' : 'rgba(59, 130, 246, 0.15)'};
         }
         
+        @keyframes dot-pulse {
+          0%, 100% { 
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+          }
+          50% { 
+            transform: translateX(-50%) scale(1.5);
+            opacity: 0.7;
+          }
+        }
+        
+        /* Streak counter animations */
         .streak-counter {
-          padding: 8px 16px;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          transition: all 0.3s ease;
+          transition: all 0.2s ease;
         }
         
         .streak-counter:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
         }
         
         .streak-counter.pulse {
-          animation: pulse 1s ease;
+          animation: streak-pulse 1s ease;
         }
         
-        .quick-checkin-btn {
-          padding: 10px 20px;
-          font-weight: 600;
-          transition: all 0.3s ease;
+        @keyframes streak-pulse {
+          0% { 
+            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+          }
+          70% { 
+            box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+          }
+          100% { 
+            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+          }
         }
         
-        .quick-checkin-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        /* Badge animations */
+        @keyframes badge-bounce {
+          0%, 100% { 
+            transform: scale(1);
+          }
+          50% { 
+            transform: scale(1.2);
+          }
         }
         
-        .theme-toggle {
-          border-radius: 50%;
-          transition: all 0.3s ease;
-        }
-        
-        .theme-toggle:hover {
-          background: rgba(0, 0, 0, 0.05);
-          transform: rotate(15deg);
-        }
-        
-        .notification-btn {
-          border-radius: 50%;
-          transition: all 0.3s ease;
-          position: relative;
-        }
-        
-        .notification-btn:hover {
-          background: rgba(0, 0, 0, 0.05);
-        }
-        
-        .notification-badge {
-          position: absolute;
-          top: 0;
-          right: 0;
-          font-size: 10px;
-          padding: 4px 6px;
-          min-width: 20px;
-          animation: badge-pulse 2s infinite;
-        }
-        
-        .user-menu-toggle {
-          text-decoration: none;
-          transition: all 0.3s ease;
-        }
-        
-        .user-menu-toggle:hover {
-          transform: translateY(-2px);
-        }
-        
-        .user-avatar {
-          color: #3b82f6;
-        }
-        
-        .user-avatar-large {
-          color: #3b82f6;
-        }
-        
-        .user-dropdown .dropdown-item {
-          transition: all 0.2s ease;
-        }
-        
-        .user-dropdown .dropdown-item:hover {
-          background: rgba(59, 130, 246, 0.1);
-          padding-left: 20px;
-        }
-        
-        .notification-dropdown {
-          animation: slide-down 0.3s ease;
-        }
-        
-        .notification-item {
-          transition: all 0.2s ease;
-          cursor: pointer;
-        }
-        
-        .notification-item:hover {
-          background: rgba(59, 130, 246, 0.05);
-          padding-left: 20px;
-        }
-        
-        @keyframes fire-flicker {
-          0%, 100% { transform: scale(1) rotate(0deg); }
-          25% { transform: scale(1.1) rotate(5deg); }
-          50% { transform: scale(1.2) rotate(0deg); }
-          75% { transform: scale(1.1) rotate(-5deg); }
-        }
-        
-        @keyframes pulse {
-          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
-          50% { transform: scale(1.05); }
-          100% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-        }
-        
-        @keyframes badge-pulse {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.1); }
-          100% { transform: scale(1); }
-        }
-        
+        /* Dropdown animations */
         @keyframes slide-down {
           from {
             opacity: 0;
@@ -734,31 +1159,36 @@ const Header = ({ userData, isDemoMode }) => {
           }
         }
         
-        /* Dark mode adjustments */
-        .dark-mode .nav-link-item:hover {
-          background: rgba(59, 130, 246, 0.2);
+        /* Search suggestions hover */
+        .search-suggestion-item:hover {
+          background: ${darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'};
         }
         
-        .dark-mode .search-input:focus {
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        /* Quick check-in hover */
+        .quick-checkin-item:hover {
+          background: ${darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)'};
         }
         
-        .dark-mode .theme-toggle:hover {
-          background: rgba(255, 255, 255, 0.1);
+        /* Notification item hover */
+        .notification-item:hover {
+          background: ${darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)'};
         }
         
-        .dark-mode .notification-btn:hover {
-          background: rgba(255, 255, 255, 0.1);
+        /* Mobile responsive */
+        @media (max-width: 1200px) {
+          .search-container {
+            display: none;
+          }
         }
         
         @media (max-width: 992px) {
-          .search-container {
-            width: 100%;
-            margin-bottom: 1rem;
+          .nav-label {
+            display: none !important;
           }
           
-          .streak-counter, .quick-checkin-btn {
-            margin-bottom: 1rem;
+          .streak-counter {
+            min-width: 60px;
+            padding: 6px 8px;
           }
         }
         
@@ -767,8 +1197,16 @@ const Header = ({ userData, isDemoMode }) => {
             padding: 0.5rem 0;
           }
           
-          .brand-text span {
-            font-size: 1.2rem;
+          .brand-text {
+            display: none;
+          }
+          
+          .search-container,
+          .streak-counter,
+          .quick-checkin-btn,
+          .theme-toggle,
+          .notification-btn {
+            display: none;
           }
         }
       `}</style>
