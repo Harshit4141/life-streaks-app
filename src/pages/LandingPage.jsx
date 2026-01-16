@@ -191,8 +191,8 @@ const LandingPage = () => {
             🔥
           </div>
           <div 
-            className="display-2 fw-bold mt-5 mb-2 gradient-text"
-            style={{ background: `linear-gradient(135deg, ${story.color}, ${story.color}AA)` }}
+            className="display-2 fw-bold mt-5 mb-2 "
+            style={{ color:'white', background: `linear-gradient(135deg, ${story.color}, ${story.color}AA)` }}
           >
             {story.days}
           </div>
@@ -306,8 +306,9 @@ const LandingPage = () => {
                     <div className="pulse-ring mb-4">
                       <div className="fire-emoji display-1">🔥</div>
                     </div>
-                    <div className="display-3 fw-bold gradient-text mb-2" style={{
-                      background: 'linear-gradient(90deg, #8B5CF6, #3B82F6)'
+                    <div className="display-3 fw-bold  mb-2" style={{
+                      background: 'linear-gradient(90deg, #8B5CF6, #3B82F6)',
+                      color:'white'
                     }}>
                       42
                     </div>
