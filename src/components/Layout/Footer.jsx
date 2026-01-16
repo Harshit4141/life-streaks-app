@@ -80,13 +80,6 @@ const Footer = () => {
     }
   };
 
-  const handleNewsletterClick = () => {
-    const newsletterSection = document.getElementById('newsletter');
-    if (newsletterSection) {
-      newsletterSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const stats = [
     { icon: <Fire />, value: '10K+', label: 'Active Streaks', color: '#F59E0B' },
     { icon: <People />, value: '5K+', label: 'Happy Users', color: '#3B82F6' },
