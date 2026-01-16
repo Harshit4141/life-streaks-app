@@ -7,7 +7,7 @@ import {
   Trophy, Star,Lightning, Fire, Rocket, 
   People, Coin, Gift, Share, Download, 
  Calendar, Clock, CheckCircle,  
-    ChevronRight, Shield,
+    ChevronRight, Shield,Lock,
   Heart, HeartFill, Flag
 } from 'react-bootstrap-icons';
 import CountUp from 'react-countup';

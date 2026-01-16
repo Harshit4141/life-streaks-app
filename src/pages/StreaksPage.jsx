@@ -10,7 +10,7 @@ import {
   BarChart, People,  
    ThreeDots, Grid3x3, ListUl, 
    X, Pencil, Tag, 
-   Rocket, 
+   Rocket, Chat,
   Gift,  VolumeUp, 
  Magic, Coin, Gem,
   ChatSquare

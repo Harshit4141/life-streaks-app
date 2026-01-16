@@ -10,7 +10,6 @@ import {
   Calendar
 } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
-import CountUp from 'react-countup';
 import toast from 'react-hot-toast';
 import Confetti from 'react-confetti';
 
