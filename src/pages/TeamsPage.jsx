@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Button, Tab, Nav, Badge, ProgressBar, ListGroup } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Tab, Nav, Badge, ProgressBar } from 'react-bootstrap';
 import { People, Trophy, Calendar, Plus, Award } from 'react-bootstrap-icons';
 
 const TeamsPage = () => {
