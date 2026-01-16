@@ -73,7 +73,6 @@ const StreaksPage = () => {
   const [importData, setImportData] = useState('');
   const [activeTab, setActiveTab] = useState('active');
   const [showCompletedToday, setShowCompletedToday] = useState(false);
-  const [autoCheckIn, setAutoCheckIn] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
@@ -86,10 +85,7 @@ const StreaksPage = () => {
   const [userCoins, setUserCoins] = useState(1500);
   const [userGems, setUserGems] = useState(50);
   const [dailyStreak, setDailyStreak] = useState(7);
-  const [weeklyGoalProgress, setWeeklyGoalProgress] = useState(65);
-  const [showTutorial, setShowTutorial] = useState(false);
   const [aiMessage, setAiMessage] = useState('');
-  const [typingText, setTypingText] = useState('');
   const [showFireworks, setShowFireworks] = useState(false);
   const [showStreakAnimation, setShowStreakAnimation] = useState(false);
   const [achievementUnlocked, setAchievementUnlocked] = useState(null);
