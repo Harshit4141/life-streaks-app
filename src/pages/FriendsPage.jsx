@@ -1,20 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Container, Row, Col, Card, Button, Form, InputGroup, 
-  ListGroup, Badge, Modal, Alert, Tab, Tabs, ProgressBar,
-  Dropdown, OverlayTrigger, Tooltip, Toast, ToastContainer,
-  Accordion, ButtonGroup
+  ListGroup, Badge, Modal, Alert, Tab, Tabs, ProgressBar
 } from 'react-bootstrap';
 import { 
-  Search, PersonPlus, Trophy, Fire, X, People, 
-  ChatDots, Lightning, Star, Shield, 
-  Bullseye, GraphUp, ArrowUp, ArrowDown, 
-  Heart, HeartFill, EmojiSmile, EmojiWink, 
-  EmojiHeartEyes, Award, Clock, Bell, Send,
-  CheckCircle, PlusCircle, ThreeDots, Share,
-  VolumeUp, VolumeMute, Dice5, Rocket, Gift,
-  Zap, Play, Stop, VolumeUpFill, VolumeMuteFill,
-  CameraVideo, MusicNote, Palette, Magic, Coin 
+  Search, PersonPlus, Trophy, Fire, People, 
+  ChatDots, Lightning, Star, 
+  Bullseye,
+  Heart, 
+  EmojiHeartEyes,  Send, Share,
+   Dice5,  Coin 
 } from 'react-bootstrap-icons';
 import { useFriends } from '../components/context/FriendsContext';
 import DemoBanner from '../components/Common/DemoBanner';

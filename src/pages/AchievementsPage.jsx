@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Container, Row, Col, Card, Button, Badge, ProgressBar, 
-  Modal, Tab, Nav, Tooltip, OverlayTrigger,
-  Alert, Spinner, Form
+  Modal, Nav, Spinner, Form
 } from 'react-bootstrap';
 import { 
-  Trophy, Star, Award, Gem, Lightning, Fire, Rocket, 
-  People, Coin, Gift, Share, Download, Bell, Magic,
-  Bullseye, Calendar, Clock, CheckCircle, XCircle, 
-  Lock, Unlock, ChevronRight, Shield,
-  Heart, HeartFill, Flag, GraphUp
+  Trophy, Star,Lightning, Fire, Rocket, 
+  People, Coin, Gift, Share, Download, 
+ Calendar, Clock, CheckCircle,  
+    ChevronRight, Shield,
+  Heart, HeartFill, Flag
 } from 'react-bootstrap-icons';
 import CountUp from 'react-countup';
 import Confetti from 'react-confetti';
@@ -18,7 +17,6 @@ import { TypeAnimation } from 'react-type-animation';
 const AchievementsPage = () => {
   // Core State
   const [userLevel, setUserLevel] = useState(42);
-  const [userRank, setUserRank] = useState('Legend');
   const [showConfetti, setShowConfetti] = useState(false);
   const [showUnlockModal, setShowUnlockModal] = useState(false);
   const [showEvolutionModal, setShowEvolutionModal] = useState(false);

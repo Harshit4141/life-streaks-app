@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Container, Row, Col, Card, Button, Badge, ProgressBar, 
-  Modal, Tabs, Tab, ListGroup
+  Modal, Tabs, Tab
 } from 'react-bootstrap';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, 
-  Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell,
+   Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, 
+  Legend, ResponsiveContainer,  Line, PieChart, Pie, Cell,
   ComposedChart
 } from 'recharts';
 import { 
-  Fire, Trophy, Star, Lightning, Rocket, Award,
-  GraphUp, Calendar, Clock, People, Gem, Coin, Bullseye,
-  CheckCircle, Download, Share, Bell, Gift, Magic
+  Fire, Trophy, Star, Rocket,
+   Calendar, Clock, People, Gem, Coin, Bullseye,
+   Download, Share, Bell, Gift, Magic
 } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';

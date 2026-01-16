@@ -1,30 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Container, Row, Col, Card, Button, Form, Modal, Badge, Alert, InputGroup, 
-  ProgressBar, Dropdown, Tabs, Tab, Tooltip, OverlayTrigger, Accordion, 
-  ListGroup, Nav, Spinner, Carousel, Toast, ToastContainer, Overlay 
+  ProgressBar, Dropdown,
+  ListGroup,Spinner
 } from 'react-bootstrap';
 import { 
-  Plus, Fire, CalendarCheck, Trash, ArrowRepeat, Search, Filter, SortDown, 
-  Star, Lightning, Trophy, Clock, CheckCircle, GraphUp, Bell, Share, Download, 
-  BarChart, ChevronRight, Calendar, CalendarEvent, People, Award, Heart, 
-  Moon, Sun, ArrowUp, ArrowDown, InfoCircle, ThreeDots, Grid3x3, ListUl, 
-  Play, Pause, Eye, EyeSlash, ChevronDown, Bookmark, BookmarkCheck, 
-  GraphUpArrow, Bullseye, CheckSquare, Square, ClockHistory, StarFill, 
-  ArrowRightCircle, Check2, X, PlusCircle, ChevronUp, Pencil, Tag, 
-  CalendarPlus, Timer, HeartFill, ShieldCheck, Zap, Rocket, Shield, 
-  Gift, Dice5, Puzzle, Lock, Unlock, CameraVideo, MusicNote, VolumeUp, 
-  VolumeMute, Palette, Magic, Coin, Gem, Diamond, Shuffle, Repeat, 
-  SkipForward, SkipBackward, PlayCircle, StopCircle, VolumeDown, VolumeOff, 
-  Mic, MicMute, Camera, Image, Video, FileEarmarkText, FileCode, Calculator, 
-  Chat, ChatDots, ChatLeftText, ChatRightText, ChatSquareText, ChatSquareQuote, 
-  ChatSquare, ChatLeft, ChatRight, ChatLeftDots, ChatRightDots, EmojiSmile, 
-  EmojiHeartEyes, EmojiWink, EmojiExpressionless, EmojiFrown, EmojiAngry, 
-  EmojiDizzy, EmojiSunglasses, EmojiLaughing, EmojiKiss, EmojiSurprise, 
-  EmojiNeutral, EmojiWinkFill, EmojiSmileUpsideDown, EmojiGrimace, 
-  EmojiAstonished, EmojiExpressionlessFill, EmojiAngryFill, EmojiDizzyFill, 
-  EmojiSunglassesFill, EmojiLaughingFill, EmojiKissFill, EmojiSurpriseFill, 
-  EmojiNeutralFill, EmojiWinkUpsideDown, EmojiGrimaceFill, EmojiAstonishedFill 
+  Plus, Fire, Trash, ArrowRepeat, Search, 
+  Star, Lightning, Trophy, Clock, CheckCircle, GraphUp, Bell,  Download, 
+  BarChart, People,  
+   ThreeDots, Grid3x3, ListUl, 
+   X, Pencil, Tag, 
+   Rocket, 
+  Gift,  VolumeUp, 
+ Magic, Coin, Gem,
+  ChatSquare
 } from 'react-bootstrap-icons';
 import { useStreaks } from '../components/context/StreaksContext';
 import DemoBanner from '../components/Common/DemoBanner';

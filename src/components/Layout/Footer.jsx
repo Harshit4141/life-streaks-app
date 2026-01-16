@@ -7,10 +7,7 @@ import {
 } from 'react-router-dom';
 import { 
   Fire, 
-  Rocket, 
-  Heart, 
   ArrowUp, 
-  ArrowRight, 
   Envelope, 
   Twitter, 
   Instagram, 
@@ -27,11 +24,9 @@ import {
   People,
   Trophy,
   Clock,
-  Bell,
   Phone,
   Map,
   ChevronRight,
-  Download,
   Apple,
   GooglePlay,
   QrCode,

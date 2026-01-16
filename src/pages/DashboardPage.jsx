@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Container, Row, Col, Card, Button, ProgressBar, 
-  Badge, Alert, Modal, Form, ListGroup, 
-  Tooltip, Dropdown, Spinner, Tabs, Tab, Toast, ToastContainer
+  Badge,  ListGroup, 
+   Toast, ToastContainer
 } from 'react-bootstrap';
 import { 
   Fire, Trophy, Star, Coin, Gem, 
-  PlusCircle, Calendar, People, Bullseye, 
-  ChevronRight, ChevronDown, Shield,
-  GraphUp, Award, Heart, Clock, CheckCircle,
-  Rocket, Target, Bell, Share, 
-  BarChart, Play, Pause, Eye, EyeSlash,
-  ArrowUp, ArrowDown, InfoCircle, ThreeDots,
-  Grid3x3, ListUl, Bookmark, BookmarkCheck,
-  Check2, X, VolumeUp, VolumeMute, Palette,
-  Magic, Dice5, Puzzle, Lock, Unlock, Gift,
-  CameraVideo, MusicNote, FileCode, Chat,
-  EmojiSmile, EmojiHeartEyes, EmojiWink,
-  Sun, Moon, Lightning
+  PlusCircle,  People, 
+   Shield, Award, Clock, CheckCircle,
+  BarChart,  Gift,
+  Sun, Moon
 } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
 import { useStreaks } from '../components/context/StreaksContext';

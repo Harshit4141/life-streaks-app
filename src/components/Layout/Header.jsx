@@ -3,32 +3,23 @@ import { Navbar, Nav, Container, Button, Badge, Dropdown, Form, InputGroup, Offc
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Bell, 
-  PersonCircle, 
   Trophy, 
   Fire, 
   Search, 
   Moon, 
   Sun, 
   Gear, 
-  GraphUp,
+  
   People,
   CalendarCheck,
   Lightning,
-  ChevronDown,
+  
   List,
   X,
   Star,
   ShieldCheck,
   Rocket,
-  Target,
   Clock,
-  Award,
-  Heart,
-  ArrowRight,
-  CheckCircle,
-  Zap,
-  TrendingUp,
-  Shield,
   House,
   BarChart
 } from 'react-bootstrap-icons';

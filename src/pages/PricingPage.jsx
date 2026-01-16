@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Container, Row, Col, Card, Button, Badge, ListGroup, Alert, 
-  Tabs, Tab, Modal, Form, ProgressBar, Spinner, Tooltip, OverlayTrigger 
+  Tabs, Tab, Modal, Form, ProgressBar, Spinner
 } from 'react-bootstrap';
 import { 
-  Check, X, Star, Building, Fire, Trophy, Shield, 
-  Lightning, People, Clock, ArrowRight, Gift, Lock, Unlock, 
-  Award, GraphUp, Target, Rocket, ChevronRight, ChevronDown,
-  ShieldCheck, VolumeUp, VolumeMute, Sun, Moon, InfoCircle,
-  Calendar, Gem, Coin, Heart, Magic
+  Check, X, Star, Building, Fire, Trophy, Shield, People, Clock, ArrowRight, Gift, Lock, Unlock, 
+  Award,  Rocket,
+  ShieldCheck, Sun, Moon, InfoCircle,
+  Calendar
 } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
 import CountUp from 'react-countup';
