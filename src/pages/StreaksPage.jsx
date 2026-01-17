@@ -70,7 +70,6 @@ const StreaksPage = () => {
   const [showArchived, setShowArchived] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const [selectedStreak, setSelectedStreak] = useState(null);
-  const [importData, setImportData] = useState('');
   const [activeTab, setActiveTab] = useState('active');
   const [showCompletedToday, setShowCompletedToday] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -321,7 +320,7 @@ const StreaksPage = () => {
       backgroundMusic.stop();
       clearInterval(interval);
     };
-  }, [musicEnabled]);
+  }, [backgroundMusic,quickHabits,musicEnabled]);
 
   // Sound effects
   const playSound = (sound) => {
