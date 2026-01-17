@@ -9,11 +9,9 @@ import {
   Moon, 
   Sun, 
   Gear, 
-  
   People,
   CalendarCheck,
   Lightning,
-  
   List,
   X,
   Star,

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { 
   CheckCircle, 
   Shield, 
-  Lightning,
   Award,
   Star,
   Heart,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Container, Row, Col, Card, Button, Form, Modal, Badge, Alert, InputGroup, 
   ProgressBar, Dropdown,
@@ -47,8 +47,6 @@ const StreaksPage = () => {
   
   // State Management
   const [showModal, setShowModal] = useState(false);
-  const [showStatsModal, setShowStatsModal] = useState(false);
-  const [showImportModal, setShowImportModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showQuestModal, setShowQuestModal] = useState(false);
@@ -67,11 +65,9 @@ const StreaksPage = () => {
   const [filterCategory, setFilterCategory] = useState('All');
   const [sortBy, setSortBy] = useState('streak');
   const [viewMode, setViewMode] = useState('grid');
-  const [showArchived, setShowArchived] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const [selectedStreak, setSelectedStreak] = useState(null);
   const [activeTab, setActiveTab] = useState('active');
-  const [showCompletedToday, setShowCompletedToday] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
@@ -89,7 +85,6 @@ const StreaksPage = () => {
   const [showStreakAnimation, setShowStreakAnimation] = useState(false);
   const [achievementUnlocked, setAchievementUnlocked] = useState(null);
   const [showDailyTip, setShowDailyTip] = useState(true);
-  const [activeQuest, setActiveQuest] = useState(null);
   const [challengeProgress, setChallengeProgress] = useState(40);
   const [communityActivity, setCommunityActivity] = useState([
     { user: "Alex", action: "achieved a 100-day streak!", streak: "Meditation", time: "2 min ago", avatar: "👨" },

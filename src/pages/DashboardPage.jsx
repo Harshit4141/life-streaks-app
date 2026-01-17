@@ -13,8 +13,8 @@ import {
 } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
 import { useStreaks } from '../components/context/StreaksContext';
-import { useFriends } from '../components/context/FriendsContext';
-import { useTeams } from '../components/context/TeamsContext';
+// import { useFriends } from '../components/context/FriendsContext';
+// import { useTeams } from '../components/context/TeamsContext';
 import DemoBanner from '../components/Common/DemoBanner';
 import toast from 'react-hot-toast';
 import CountUp from 'react-countup';
@@ -23,13 +23,11 @@ import Confetti from 'react-confetti';
 const DashboardPage = ({ userData }) => {
   const navigate = useNavigate();
   const { streaks, getStreakStats, checkInStreak } = useStreaks();
-  const { friends, getLeaderboard } = useFriends();
-  const { teams, teamChallenges } = useTeams();
+  // const { friends, getLeaderboard } = useFriends();
+  // const { teams, teamChallenges } = useTeams();
   
   // Core State
   const [darkMode, setDarkMode] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('today');
   const [showConfetti, setShowConfetti] = useState(false);
   const [unlockedAchievement, setUnlockedAchievement] = useState(null);
   const [showDailyMission, setShowDailyMission] = useState(true);
@@ -38,7 +36,6 @@ const DashboardPage = ({ userData }) => {
   const [userLevel, setUserLevel] = useState(5);
   const [userXP, setUserXP] = useState(1250);
   const [userCoins, setUserCoins] = useState(1500);
-  const [userGems, setUserGems] = useState(12);
   const [streakFreezes, setStreakFreezes] = useState(2);
   const [activeStreak, setActiveStreak] = useState(27);
   

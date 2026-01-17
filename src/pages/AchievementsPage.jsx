@@ -24,7 +24,6 @@ const AchievementsPage = () => {
   const [selectedAchievement, setSelectedAchievement] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
-  const [seasonProgress, setSeasonProgress] = useState(65);
 
   // Dynamic Stats
   const [stats, setStats] = useState({
