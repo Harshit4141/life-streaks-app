@@ -16,9 +16,9 @@ import { TypeAnimation } from 'react-type-animation';
 
 const AchievementsPage = () => {
   // Core State
-  const [userLevel, setUserLevel] = useState(42);
+  // const [userLevel, setUserLevel] = useState(42);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [showUnlockModal, setShowUnlockModal] = useState(false);
+  //const [showUnlockModal, setShowUnlockModal] = useState(false);
   const [showEvolutionModal, setShowEvolutionModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [selectedAchievement, setSelectedAchievement] = useState(null);
@@ -646,7 +646,7 @@ const AchievementsPage = () => {
                       className="position-absolute top-0 start-100 translate-middle rounded-pill px-3 py-2"
                       style={{ color: '#000000' }}
                     >
-                      Lv. {userLevel}
+                      Lv. 42
                     </Badge>
                   </div>
                   <div>
@@ -728,7 +728,7 @@ const AchievementsPage = () => {
                   <Button
                     variant="warning"
                     className="fw-bold py-3 d-flex align-items-center justify-content-center"
-                    onClick={() => setShowUnlockModal(true)}
+                    // onClick={() => setShowUnlockModal(true)}
                     style={{
                       background: 'linear-gradient(135deg, #f59e0b, #f97316)',
                       border: 'none',

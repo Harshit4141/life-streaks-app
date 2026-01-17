@@ -18,7 +18,7 @@ import {
 import { useStreaks } from '../components/context/StreaksContext';
 import DemoBanner from '../components/Common/DemoBanner';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import Confetti from 'react-confetti';
 import { Howl } from 'howler';
 import Particles from "react-tsparticles";
@@ -43,7 +43,7 @@ const checkInSound = new Howl({
 
 const StreaksPage = () => {
   const { streaks, addStreak, deleteStreak, resetStreak, getStreakStats, checkStreak, archiveStreak, updateStreak } = useStreaks();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   
   // State Management
   const [showModal, setShowModal] = useState(false);

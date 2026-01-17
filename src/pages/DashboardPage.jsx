@@ -540,7 +540,7 @@ const DashboardPage = ({ userData }) => {
                   <Button 
                     variant="warning" 
                     className="fw-bold py-3 d-flex align-items-center justify-content-center"
-                    onClick={() => navigate('/streaks/new')}
+                    onClick={() => navigate('/streaks')}
                     style={{
                       background: 'linear-gradient(135deg, #f59e0b, #f97316)',
                       border: 'none',

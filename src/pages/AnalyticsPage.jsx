@@ -13,14 +13,14 @@ import {
    Calendar, Clock, People, Gem, Coin, Bullseye,
    Download, Share, Bell, Gift, Magic
 } from 'react-bootstrap-icons';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import CountUp from 'react-countup';
 import Confetti from 'react-confetti';
 import { TypeAnimation } from 'react-type-animation';
 
 const AnalyticsPage = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   
   // Core State
   const [userLevel, setUserLevel] = useState(7);
